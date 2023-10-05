@@ -1,7 +1,13 @@
 const express = require('express');
+const helmet = require("helmet");
+const morgan = require("morgan");
 const Joi = require('joi');
 const app = express();
 const PORT = 8080;
+
+//console.log(`NODE_ENV ${process.env.NODE_ENV}`);
+//console.log(`app.get: ${app.get("env")}`);
+
 
 const courses = [{
     id: 1,
@@ -17,6 +23,17 @@ const courses = [{
     }]
 
 app.use(express.json());
+
+if(app.get("env") === "development") {
+    app.use(morgan("tiny"));
+    console.log("Morgan running....")
+}
+app.use(helmet());
+
+app.use((req, res, next) => {
+    console.log("Authenticating...");
+    next();
+})
 
 app.get('/', (req, res) => {
     res.send('Hello world');
